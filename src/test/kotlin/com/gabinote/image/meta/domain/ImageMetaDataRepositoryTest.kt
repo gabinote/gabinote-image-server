@@ -4,12 +4,11 @@ import com.gabinote.image.testSupport.testTemplate.RepositoryTestTemplate
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalDateTime
 
 class ImageMetaDataRepositoryTest : RepositoryTestTemplate() {
 
     override val baseData = "base.json"
-    override val baseDataDir = "/testsets/meta/domain"
+    override val baseDataDir = "/testset/domain"
 
     @Autowired
     private lateinit var imageMetaDataRepository: ImageMetaDataRepository
@@ -89,18 +88,18 @@ class ImageMetaDataRepositoryTest : RepositoryTestTemplate() {
             describe("ImageMetaDataRepositoryTest.save(신규)") {
                 context("신규 ImageMetaData가 주어지면") {
                     testDataHelper.setData("$baseDataDir/save-before.json")
+                    val newImageMetaData = ImageMetaData(
+                        originName = "new_image.png",
+                        convertedName = "d4e5f6a7-b8c9-4012-3456-789012cdefgh.png",
+                        format = "png",
+                        size = 153600,
+                        width = 1024,
+                        height = 768,
+                        storagePath = "/images/2024/08/",
+                        uploadBy = "user_gamma_9012"
+                    )
                     it("ImageMetaData를 저장한다") {
-                        val newImageMetaData = ImageMetaData(
-                            originName = "new_image.png",
-                            convertedName = "d4e5f6a7-b8c9-4012-3456-789012cdefgh.png",
-                            format = "png",
-                            size = 153600,
-                            width = 1024,
-                            height = 768,
-                            storagePath = "/images/2024/08/",
-                            uploadBy = "user_gamma_9012",
-                            uploadDate = LocalDateTime.parse("2024-08-01T12:00:00")
-                        )
+
                         imageMetaDataRepository.save(newImageMetaData)
                         testDataHelper.assertData("$baseDataDir/save-after.json")
                     }

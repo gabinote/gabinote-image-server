@@ -3,6 +3,7 @@ package com.gabinote.image.testSupport.testTemplate
 
 import com.gabinote.image.testSupport.testConfig.db.UseTestDatabase
 import com.gabinote.coffeenote.testSupport.testUtil.database.TestDataHelper
+import com.gabinote.image.common.config.MongodbConfig
 import com.gabinote.image.testSupport.testUtil.time.TestTimeConfig
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.junit5.MockKExtension
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Import
 @Import(
     TestDataHelper::class,
     TestTimeConfig::class,
+    MongodbConfig::class,
 )
 @DataMongoTest
 @UseTestDatabase
