@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: gabi-image
+
+  profiles:
+    active: local,test,prod
