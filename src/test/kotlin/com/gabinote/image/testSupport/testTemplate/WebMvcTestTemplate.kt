@@ -1,8 +1,7 @@
-package com.gabinote.coffeenote.testSupport.testTemplate
+package com.gabinote.image.testSupport.testTemplate
 
 
-import com.gabinote.coffeenote.testSupport.testConfig.jackson.UseJackson
-import com.gabinote.coffeenote.testSupport.testUtil.time.TestTimeProvider
+import com.gabinote.image.testSupport.testUtil.time.TestTimeProvider
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.extension.ExtendWith
@@ -13,7 +12,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy
 import org.springframework.context.annotation.Import
 import org.springframework.test.annotation.DirtiesContext
 
-@UseJackson
 @AutoConfigureMockMvc
 @EnableAspectJAutoProxy
 @AutoConfigureRestDocs

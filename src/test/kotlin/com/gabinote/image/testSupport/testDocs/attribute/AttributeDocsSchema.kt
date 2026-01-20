@@ -1,3 +1,0 @@
-package com.gabinote.coffeenote.testSupport.testDocs.attribute
-
-object AttributeDocsSchema

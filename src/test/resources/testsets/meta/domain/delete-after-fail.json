@@ -1,0 +1,53 @@
+{
+  "image_meta_data": [
+    {
+      "_id": {
+        "$oid": "66a7b2a60e0a514d2a1c0001"
+      },
+      "originName": "profile_image.png",
+      "convertedName": "a1b2c3d4-e5f6-4789-0123-4567890abcde.png",
+      "format": "png",
+      "size": 102400,
+      "width": 800,
+      "height": 600,
+      "storagePath": "/images/2024/07/",
+      "uploadBy": "target_user",
+      "uploadDate": {
+        "$date": "2024-07-29T10:00:00Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "66a7b2a60e0a514d2a1c0002"
+      },
+      "originName": "banner_image.jpg",
+      "convertedName": "b2c3d4e5-f6a7-4890-1234-567890abcdef.jpg",
+      "format": "jpeg",
+      "size": 204800,
+      "width": 1920,
+      "height": 1080,
+      "storagePath": "/images/2024/07/",
+      "uploadBy": "target_user",
+      "uploadDate": {
+        "$date": "2024-07-28T15:30:00Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "66a7b2a60e0a514d2a1c0003"
+      },
+      "originName": "thumbnail.webp",
+      "convertedName": "c3d4e5f6-a7b8-4901-2345-678901bcdefg.webp",
+      "format": "webp",
+      "size": 51200,
+      "width": 400,
+      "height": 300,
+      "storagePath": "/images/2024/07/",
+      "uploadBy": "target_user",
+      "uploadDate": {
+        "$date": "2024-07-27T08:10:55Z"
+      }
+    }
+  ]
+}
+
