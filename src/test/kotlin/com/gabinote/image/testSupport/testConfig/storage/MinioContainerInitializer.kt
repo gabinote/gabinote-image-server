@@ -1,6 +1,7 @@
 package com.gabinote.image.testSupport.testConfig.storage
 
 
+import com.gabinote.image.testSupport.testConfig.container.ContainerNetworkHelper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
@@ -18,8 +19,11 @@ class MinioContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
         val testSecretKey = "test-secret-key"
         @JvmStatic
         val minio = MinIOContainer("minio/minio:latest").apply {
-            withLabel("test-container", "mongodb")
+            withNetwork(ContainerNetworkHelper.testNetwork)
+            withNetworkAliases("minio")
+            withLabel("test-container", "minio")
             withUserName(testAccessKey)
+            withReuse(true)
             withPassword(testSecretKey)
         }
 

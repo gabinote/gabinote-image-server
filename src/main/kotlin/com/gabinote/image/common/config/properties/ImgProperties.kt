@@ -7,7 +7,6 @@ data class ImgProperties(
     val allowedFormats: MutableSet<String> = mutableSetOf(),
     val maxWidth: Int,
     val maxHeight: Int,
-    val fileName: String,
     val maxFileSize: Long,
     val maxFileNameSize: Long
 )

@@ -20,6 +20,7 @@ import javax.imageio.ImageIO
 /**
  * 이미지 업로드를 처리하는 서비스 클래스
  */
+// TODO: 비 직관적이고 지저분한 이미지 이름 및 포맷 정보 리펙토링
 @Service
 class ImageUploadService(
     private val imageMetaDataService: ImageMetaDataService,
@@ -34,7 +35,7 @@ class ImageUploadService(
      * 해당 이미지를 저장소에 업로드하고, 메타데이터를 생성
      * @param file 업로드할 이미지 파일
      * @param uploader 업로더 정보
-     * @return 저장된 이미지의 변환 이름
+     * @return 저장된 이미지의 변환된 이름 (확장자 포함)
      */
     @Transactional
     fun uploadImage(file: MultipartFile,uploader: String): String{
@@ -49,12 +50,13 @@ class ImageUploadService(
 
         saveMetaData(imageInfo, uploader, convertedName)
 
+        val savedName = "$convertedName.${imageInfo.format}"
         imageStorageService.saveImageToStorage(
-            convertedName = convertedName.toString(),
+            convertedName = savedName,
             imageStream = ByteArrayInputStream(fileBytes)
         )
 
-        return convertedName.toString()
+        return savedName
     }
 
     /**
@@ -94,10 +96,10 @@ class ImageUploadService(
      * @param convertedName 변환된 이미지 이름
      */
     private fun saveMetaData(imageInfo: ImageInfo, uploader: String,convertedName: UUID){
-        val savePath = imageStorageService.getSavePath(convertedName.toString())
+        val savePath = imageStorageService.getSavePath("$convertedName.${imageInfo.format}")
         val metaData = ImageMetaDataCreateReqServiceDto(
             originName = imageInfo.originalImage,
-            convertedName = convertedName.toString(),
+            convertedName = "$convertedName.${imageInfo.format}",
             format = imageInfo.format.lowercase(),
             size = imageInfo.size,
             uploadBy = uploader,

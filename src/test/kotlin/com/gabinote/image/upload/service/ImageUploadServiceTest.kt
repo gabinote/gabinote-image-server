@@ -89,7 +89,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
 
                         val expectedMeta = ImageMetaDataCreateReqServiceDto(
                             originName = "$fileName.${validImage.format}",
-                            convertedName = convertName.toString(),
+                            convertedName = "$convertName.png",
                             format = validImage.format.lowercase(),
                             size = mockFile.size,
                             width = 1,
@@ -100,7 +100,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
 
                         beforeTest {
 
-                            every { imageStorageService.getSavePath(convertName.toString()) } returns testSavePath
+                            every { imageStorageService.getSavePath("$convertName.png")} returns testSavePath
 
                             every { imageMetaDataService.createImageMetaData(expectedMeta) } returns Unit
                         }
@@ -109,7 +109,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                         beforeTest {
                             every {
                                 imageStorageService.saveImageToStorage(
-                                    convertedName = convertName.toString(),
+                                    convertedName = "$convertName.png",
                                     imageStream = any()
                                 )
                             } returns Unit
@@ -118,14 +118,14 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                         it("이미지를 저장소에 업로드하고 메타데이터를 생성한 후 변환된 이름을 반환한다.") {
                             val result = imageUploadService.uploadImage(mockFile, testUploader)
 
-                            result shouldBe convertName.toString()
+                            result shouldBe "$convertName.png"
 
                             verify(exactly = 1) { uuidSource.generateUuid() }
-                            verify(exactly = 1) { imageStorageService.getSavePath(convertName.toString()) }
+                            verify(exactly = 1) { imageStorageService.getSavePath("$convertName.png") }
                             verify(exactly = 1) { imageMetaDataService.createImageMetaData(expectedMeta) }
                             verify(exactly = 1) {
                                 imageStorageService.saveImageToStorage(
-                                    convertedName = convertName.toString(),
+                                    convertedName = "$convertName.png",
                                     imageStream = any()
                                 )
                             }

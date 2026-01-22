@@ -2,6 +2,8 @@ package com.gabinote.image.testSupport.testUtil.img
 
 import org.springframework.boot.test.context.TestComponent
 import org.springframework.core.io.ClassPathResource
+import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import java.io.FileNotFoundException
 import java.io.InputStream
 
@@ -18,6 +20,10 @@ class TestImgLoader {
         return resource.inputStream
     }
 
+    fun loadAsMockMultipartFile(path: String, originalFilename: String,contentType: MediaType): MockMultipartFile {
+        val inputStream = loadAsStream(path)
+        return MockMultipartFile("file", originalFilename, contentType.toString(), inputStream)
+    }
     /**
      * classpath에 있는 파일을 읽어 ByteArray로 반환
      */

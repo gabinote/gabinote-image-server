@@ -6,6 +6,7 @@ import com.gabinote.image.testSupport.testConfig.db.DatabaseContainerInitializer
 import com.gabinote.image.testSupport.testUtil.time.TestTimeProvider
 
 import com.gabinote.image.testSupport.testConfig.db.UseTestDatabase
+import com.gabinote.image.testSupport.testConfig.imgProxy.ImgProxyContainerInitializer
 import com.gabinote.image.testSupport.testConfig.storage.MinioContainerInitializer
 import com.gabinote.image.testSupport.testUtil.minio.MinioTestHelper
 import com.gabinote.image.testSupport.testUtil.uuid.TestUuidSource
@@ -29,7 +30,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
     TestUuidSource::class,
 )
 @Testcontainers
-@ContextConfiguration(initializers = [MinioContainerInitializer::class, DatabaseContainerInitializer::class])
+@ContextConfiguration(initializers = [MinioContainerInitializer::class, DatabaseContainerInitializer::class, ImgProxyContainerInitializer::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 abstract class IntegrationTestTemplate : FeatureSpec() {
     @LocalServerPort
