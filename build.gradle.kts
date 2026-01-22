@@ -61,9 +61,7 @@ dependencies {
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
-    testImplementation("org.testcontainers:kafka")
-    testImplementation("com.github.dasniko:testcontainers-keycloak:3.7.0")
-    // https://mvnrepository.com/artifact/io.debezium/debezium-testing-testcontainers
+    testImplementation("org.testcontainers:minio")
     testImplementation("io.debezium:debezium-testing-testcontainers:3.4.0.Final")
     // rest assured
     testImplementation("io.rest-assured:rest-assured:5.5.5")
@@ -120,6 +118,10 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/io.awspring.cloud/spring-cloud-aws-starter-s3
     implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.4.2")
 
+
+    // file type detection
+    // Source: https://mvnrepository.com/artifact/org.apache.tika/tika-core
+    implementation("org.apache.tika:tika-core:3.2.3")
 }
 
 kotlin {

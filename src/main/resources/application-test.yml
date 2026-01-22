@@ -9,10 +9,26 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  cloud:
+    aws:
+      s3:
+        path-style-access-enabled: true
 
 logging:
   config: classpath:logback-test.xml
 
+gabinote:
+  img:
+    allowed-formats: ["jpg", "png", "gif"]
+    max-width: 1920
+    max-height: 1080
+    file-name: "uploaded_image"
+    max-file-size: 5242880
+    max-file-name-size: 255
 
+imgproxy:
+  base-url: "http://localhost:8081"
+  key: "test"
+  salt: "testsalt"
 
 
