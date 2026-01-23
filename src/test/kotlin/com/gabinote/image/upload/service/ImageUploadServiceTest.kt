@@ -64,6 +64,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
             every { imgProperties.maxHeight } returns defaultMaxHeight
             every { imgProperties.allowedFormats } returns defaultAllowedFormats
             every { imgProperties.maxFileNameSize } returns defaultMaxFileNameSize
+            every { imgProperties.allowedFormatSet } returns defaultAllowedFormats.map { it.uppercase() }.toSet()
         }
 
         describe("[ImageUpload] ImageUploadService Test") {
@@ -163,7 +164,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                             }
 
                             ex.name shouldBe "Image"
-                            ex.reasons shouldBe listOf("File extension is missing in filename: $testName")
+                            ex.reasons shouldBe listOf("Original filename format is invalid: $testName")
                         }
                     }
 
@@ -201,6 +202,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
 
                         beforeTest {
                             // 파일 크기 제한을 매우 작게 설정
+                            every { uuidSource.generateUuid() } returns TestUuidSource.UUID_STRING
                             every { imgProperties.maxFileSize } returns maxFileSize
                             every { tika.detect(any<ByteArray>()) } returns "image/${tooLargeImg.format.lowercase()}"
                         }
@@ -225,6 +227,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
 
 
                         beforeTest {
+                            every { uuidSource.generateUuid() } returns TestUuidSource.UUID_STRING
                             every { imgProperties.maxWidth } returns maxWidth.toInt()
                             every { tika.detect(any<ByteArray>()) } returns "image/${invalidImage.format.lowercase()}"
                         }
@@ -249,6 +252,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                         val maxHeight = invalidImage.height - 1 // 테스트용으로 1 작게 설정하여 항상 초과하도록 함
 
                         beforeTest {
+                            every { uuidSource.generateUuid() } returns TestUuidSource.UUID_STRING
                             every { tika.detect(any<ByteArray>()) } returns "image/${invalidImage.format.lowercase()}"
                             every { imgProperties.maxHeight } returns maxHeight.toInt()
                         }
@@ -272,8 +276,9 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                         val allowedFormats = mutableSetOf("PNG")
 
                         beforeTest {
+                            every { uuidSource.generateUuid() } returns TestUuidSource.UUID_STRING
                             every { tika.detect(any<ByteArray>()) } returns "image/${invalidImage.format.lowercase()}"
-                            every { imgProperties.allowedFormats } returns allowedFormats
+                            every { imgProperties.allowedFormatSet } returns allowedFormats
                         }
 
                         it("ResourceNotValid 예외를 던진다.") {
@@ -282,7 +287,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                             }
 
                             ex.name shouldBe "Image"
-                            ex.reasons shouldBe listOf("Unsupported image format: jpeg. Supported formats are: ${allowedFormats.joinToString(", ")}")
+                            ex.reasons shouldBe listOf("Unsupported image format: JPEG. Supported formats are: ${allowedFormats.joinToString(", ")}")
 
                         }
                     }
@@ -295,6 +300,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                         val mockFile = invalidImage.toMockMultipartFile(tooLong)
                         val maxFileName = tooLong.length - 1
                         beforeTest {
+                            every { uuidSource.generateUuid() } returns TestUuidSource.UUID_STRING
                             every { tika.detect(any<ByteArray>()) } returns "image/${invalidImage.format.lowercase()}"
                             every { imgProperties.maxFileNameSize } returns maxFileName.toLong()
                         }
@@ -317,6 +323,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                         val mockFile = invalidImage.toMockMultipartFile(testOriginalFilename)
 
                         beforeTest {
+                            every { uuidSource.generateUuid() } returns TestUuidSource.UUID_STRING
                             every { tika.detect(any<ByteArray>()) } returns "application/${invalidImage.format.lowercase()}"
                         }
 
@@ -338,6 +345,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                         val mockFile = invalidImage.toMockMultipartFile(testOriginalFilename)
 
                         beforeTest {
+                            every { uuidSource.generateUuid() } returns TestUuidSource.UUID_STRING
                             every { tika.detect(any<ByteArray>()) } returns "image/jpeg"
                         }
 
@@ -347,7 +355,7 @@ class ImageUploadServiceTest : ServiceTestTemplate() {
                             }
 
                             ex.name shouldBe "Image"
-                            ex.reasons shouldBe listOf("File extension png does not match MIME type image/jpeg.")
+                            ex.reasons shouldBe listOf("File extension PNG does not match MIME type image/jpeg.")
                         }
                     }
                 }

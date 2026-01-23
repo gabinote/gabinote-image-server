@@ -1,9 +1,12 @@
 package com.gabinote.image.upload.service
 
-import com.gabinote.image.common.config.ImgConfig
 import com.gabinote.image.common.config.properties.ImgProperties
 import com.gabinote.image.common.util.exception.service.ResourceNotValid
-import com.gabinote.image.common.util.file.FileHelper
+import com.gabinote.image.common.util.img.ImgExtension
+import com.gabinote.image.common.util.img.ImgMimeType
+import com.gabinote.image.common.util.img.ImgName
+import com.gabinote.image.common.util.img.ImgStem
+import com.gabinote.image.common.util.str.StringHelper.isSimpleFileNameFormat
 import com.gabinote.image.common.util.uuid.UuidSource
 import com.gabinote.image.meta.dto.service.ImageMetaDataCreateReqServiceDto
 import com.gabinote.image.meta.service.ImageMetaDataService
@@ -12,7 +15,6 @@ import org.apache.tika.Tika
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
-import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.util.UUID
 import javax.imageio.ImageIO
@@ -40,23 +42,21 @@ class ImageUploadService(
     @Transactional
     fun uploadImage(file: MultipartFile,uploader: String): String{
         val fileBytes = file.bytes
-        val originalFilename = extractOriginalName(file)
-        val imageInfo = extractImageInfo(fileBytes, originalFilename)
-
+        val imgName = extractImgName(file)
+        val imageInfo = extractImageInfo(fileBytes, imgName)
         validationImgInfo(imageInfo)
 
-
-        val convertedName = uuidSource.generateUuid()
+        val convertedName = ImgName.from(uuidSource.generateUuid().toString(), imgName.ext)
 
         saveMetaData(imageInfo, uploader, convertedName)
 
-        val savedName = "$convertedName.${imageInfo.format}"
+
         imageStorageService.saveImageToStorage(
-            convertedName = savedName,
+            convertedName = convertedName.fullName,
             imageStream = ByteArrayInputStream(fileBytes)
         )
 
-        return savedName
+        return convertedName.fullName
     }
 
     /**
@@ -65,8 +65,7 @@ class ImageUploadService(
      * @param filename 원본 파일 이름
      * @return 추출된 이미지 정보
      */
-    private fun extractImageInfo(bytes: ByteArray, filename: String): ImageInfo{
-        val extension = extractExtension(filename)
+    private fun extractImageInfo(bytes: ByteArray, imgName: ImgName): ImageInfo{
         val mimeType = extractMimeType(bytes)
         val bufferedImage = runCatching {
             ImageIO.read(ByteArrayInputStream(bytes))
@@ -75,7 +74,7 @@ class ImageUploadService(
         }.getOrElse { e ->
             throw ResourceNotValid(
                 "Image",
-                listOf("Unable to read image data from file: $filename")
+                listOf("Unable to read image data from file: ${imgName.fullName}")
             )
         }
 
@@ -83,8 +82,8 @@ class ImageUploadService(
             width = bufferedImage.width,
             height = bufferedImage.height,
             size = bytes.size.toLong(),
-            format = extension,
-            originalImage = filename,
+            format = imgName.ext,
+            originalName = imgName,
             mimeType = mimeType
         )
     }
@@ -95,12 +94,14 @@ class ImageUploadService(
      * @param uploader 업로더 정보
      * @param convertedName 변환된 이미지 이름
      */
-    private fun saveMetaData(imageInfo: ImageInfo, uploader: String,convertedName: UUID){
-        val savePath = imageStorageService.getSavePath("$convertedName.${imageInfo.format}")
+    private fun saveMetaData(imageInfo: ImageInfo, uploader: String,convertedName: ImgName){
+
+        val savePath = imageStorageService.getSavePath(convertedName.fullName)
+
         val metaData = ImageMetaDataCreateReqServiceDto(
-            originName = imageInfo.originalImage,
-            convertedName = "$convertedName.${imageInfo.format}",
-            format = imageInfo.format.lowercase(),
+            originName = imageInfo.originalName.fullName,
+            convertedName = convertedName.fullName,
+            format = imageInfo.format.ext().lowercase(),
             size = imageInfo.size,
             uploadBy = uploader,
             storagePath = savePath,
@@ -133,15 +134,15 @@ class ImageUploadService(
         }
 
         //3. 확장자 제한
-        if(imageInfo.format.uppercase() !in imgProperties.allowedFormats) {
+        if(imageInfo.format.ext() !in imgProperties.allowedFormatSet) {
             throw ResourceNotValid(
                 name = "Image",
-                reasons = listOf("Unsupported image format: ${imageInfo.format}. Supported formats are: ${imgProperties.allowedFormats.joinToString(", ")}")
+                reasons = listOf("Unsupported image format: ${imageInfo.format.ext()}. Supported formats are: ${imgProperties.allowedFormatSet.joinToString(", ")}")
             )
         }
 
         //4. 원본 파일 이름 사이즈 제한
-        if(imageInfo.originalImage.length > imgProperties.maxFileNameSize) {
+        if(imageInfo.originalName.stemStr.length > imgProperties.maxFileNameSize) {
             throw ResourceNotValid(
                 name = "Image",
                 reasons = listOf("Original filename exceeds the maximum length of ${imgProperties.maxFileNameSize} characters")
@@ -150,18 +151,18 @@ class ImageUploadService(
 
         //5. MIME 타입 검사
         //5-1. image/ 로 시작하는지 검사
-        if(!imageInfo.mimeType.startsWith("image/")) {
+        if(!imageInfo.mimeType.mimeType().startsWith("image/")) {
             throw ResourceNotValid(
                 name = "Image",
-                reasons = listOf("Invalid MIME type: ${imageInfo.mimeType}. Expected an image MIME type.")
+                reasons = listOf("Invalid MIME type: ${imageInfo.mimeType.mimeType()}. Expected an image MIME type.")
             )
         }
 
         //5-2. 확장자와 MIME 타입 매칭 검사
-        if("image/${imageInfo.format}" != imageInfo.mimeType) {
+        if(imageInfo.format.ext() != imageInfo.mimeType.ext()) {
             throw ResourceNotValid(
                 name = "Image",
-                reasons = listOf("File extension ${imageInfo.format} does not match MIME type ${imageInfo.mimeType}.")
+                reasons = listOf("File extension ${imageInfo.format.ext()} does not match MIME type ${imageInfo.mimeType.mimeType()}.")
             )
         }
 
@@ -173,12 +174,14 @@ class ImageUploadService(
      * @return 원본 파일 이름
      * @throws ResourceNotValid 원본 파일 이름이 없는 경우
      */
-    private fun extractOriginalName(file:MultipartFile): String {
+    private fun extractImgName(file:MultipartFile): ImgName {
+        //1. d이름이 없는 경우 예외 처리
         val name = file.originalFilename ?: throw ResourceNotValid(
             name = "Image",
             reasons = listOf("Original filename is missing")
         )
 
+        //2. 이름이 비어있는 경우 예외 처리
         if(name.isBlank()){
             throw ResourceNotValid(
                 name = "Image",
@@ -186,40 +189,27 @@ class ImageUploadService(
             )
         }
 
-        return name
 
-    }
-
-    /**
-     * 파일 확장자 추출
-     * 이때 "jpg"는 "jpeg"로 변환
-     * @param originalFilename 원본 파일 이름
-     * @return 파일 확장자 (소문자)
-     * @throws ResourceNotValid 확장자가 없는 경우
-     */
-    private fun extractExtension(originalFilename: String): String {
-        val lastDotIndex = originalFilename.lastIndexOf('.')
-        if (lastDotIndex == -1 || lastDotIndex == originalFilename.length - 1) {
+        //3. 파일 이름 포맷이 아닌 경우 예외 처리
+        if(!name.isSimpleFileNameFormat()){
             throw ResourceNotValid(
                 name = "Image",
-                reasons = listOf("File extension is missing in filename: $originalFilename")
-            )
-        }
-        var res = originalFilename.substring(lastDotIndex + 1).lowercase()
-
-        if(res.isBlank()){
-            throw ResourceNotValid(
-                name = "Image",
-                reasons = listOf("File extension is missing in filename: $originalFilename")
+                reasons = listOf("Original filename format is invalid: $name")
             )
         }
 
-        if(res == "jpg"){
-            res = "jpeg"
+        //4. 특수하게 jpg 확장자라면, jpeg로 변환
+        val ext = name.substringAfterLast('.')
+        val correctedName = if(ext.equals("jpg", ignoreCase = true)){
+            name.substringBeforeLast('.') + ".jpeg"
+        } else {
+            name
         }
 
-        return res
+        return ImgName(correctedName)
+
     }
+
 
     /**
      * 파일 확장자 추출 (MIME 타입 기반)
@@ -227,9 +217,10 @@ class ImageUploadService(
      * @return 파일 확장자
      * @throws ResourceNotValid 확장자 추출 실패 시 예외 발생
      */
-    private fun extractMimeType(byte: ByteArray): String {
+    private fun extractMimeType(byte: ByteArray): ImgMimeType {
         return runCatching {
-            tika.detect(byte)
+            val res = tika.detect(byte)
+            ImgMimeType(res)
         }.getOrElse { e ->
             throw ResourceNotValid(
                 "Image",
@@ -240,12 +231,12 @@ class ImageUploadService(
     }
 
     private data class ImageInfo (
-        val originalImage: String,
+        val originalName: ImgName,
         val width: Int,
         val height: Int,
         val size: Long,
-        val format: String,
-        val mimeType: String,
+        val format: ImgExtension,
+        val mimeType: ImgMimeType,
     )
 
 }
