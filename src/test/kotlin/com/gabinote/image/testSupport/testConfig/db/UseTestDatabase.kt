@@ -1,10 +1,9 @@
-package com.gabinote.coffeenote.testSupport.testConfig.db
+package com.gabinote.image.testSupport.testConfig.db
 
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-import org.testcontainers.junit.jupiter.Testcontainers
 import java.lang.annotation.Inherited
 
 

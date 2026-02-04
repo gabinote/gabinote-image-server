@@ -1,4 +1,4 @@
-package com.gabinote.coffeenote.testSupport.testTemplate
+package com.gabinote.image.testSupport.testTemplate
 
 
 import io.kotest.core.spec.style.DescribeSpec

@@ -1,0 +1,19 @@
+{
+  "image_meta_data": [
+    {
+      "_id": "$anyObject()",
+      "originName": "new_image.png",
+      "convertedName": "d4e5f6a7-b8c9-4012-3456-789012cdefgh.png",
+      "format": "png",
+      "size": 153600,
+      "width": 1024,
+      "height": 768,
+      "storagePath": "/images/2024/08/",
+      "uploadBy": "user_gamma_9012",
+      "uploadDate": {
+        "$date": "2002-08-27T15:00:00Z"
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,19 @@
+{
+  "image_meta_data": [
+    {
+      "_id": "$anyObject()",
+      "originName": "test.png",
+      "convertedName": "00000000-0000-0000-0000-000000000000.png",
+      "format": "png",
+      "size": 665,
+      "width": 10,
+      "height": 10,
+      "storagePath": "s3://test-bucket/00000000-0000-0000-0000-000000000000.png",
+      "uploadBy": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "uploadDate": {
+        "$date": "2002-08-27T15:00:00Z"
+      }
+    }
+  ]
+}
+

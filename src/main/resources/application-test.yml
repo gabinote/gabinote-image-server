@@ -9,10 +9,38 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  cloud:
+    aws:
+      s3:
+        path-style-access-enabled: true
+    config:
+      enabled: false
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 logging:
   config: classpath:logback-test.xml
 
+gabinote:
+  img:
+    # 반드시 대문자로 작성
+    allowed-formats: ["PNG","WEBP","JPEG","JPG"]
+    max-width: 1920
+    max-height: 1080
+
+    max-file-size: 5242880
+    max-file-name-size: 255
+
+imgproxy:
+  base-url: "http://localhost:8081"
+  key: "test"
+  salt: "testsalt"
+  cache:
+    cache-ttl: 3600
 
 
 

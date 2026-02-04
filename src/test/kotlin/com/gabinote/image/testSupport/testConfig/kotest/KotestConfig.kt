@@ -1,4 +1,4 @@
-package com.gabinote.coffeenote.testSupport.testConfig.kotest
+package com.gabinote.image.testSupport.testConfig.kotest
 
 import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.extensions.Extension

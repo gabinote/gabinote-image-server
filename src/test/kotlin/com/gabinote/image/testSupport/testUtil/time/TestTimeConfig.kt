@@ -1,6 +1,6 @@
-package com.gabinote.coffeenote.testSupport.testUtil.time
+package com.gabinote.image.testSupport.testUtil.time
 
-import com.gabinote.coffeenote.common.util.time.TimeProvider
+import com.gabinote.image.common.util.time.TimeProvider
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 

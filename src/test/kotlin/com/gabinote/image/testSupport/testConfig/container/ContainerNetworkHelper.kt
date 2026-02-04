@@ -1,7 +1,8 @@
-package com.gabinote.coffeenote.testSupport.testConfig.container
+package com.gabinote.image.testSupport.testConfig.container
 
 import org.testcontainers.containers.Network
 import java.net.ServerSocket
+import kotlin.io.use
 
 object ContainerNetworkHelper {
     @JvmStatic
