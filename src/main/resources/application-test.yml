@@ -13,6 +13,8 @@ spring:
     aws:
       s3:
         path-style-access-enabled: true
+    config:
+      enabled: false
 
   servlet:
     multipart:

@@ -122,6 +122,10 @@ dependencies {
     // file type detection
     // Source: https://mvnrepository.com/artifact/org.apache.tika/tika-core
     implementation("org.apache.tika:tika-core:3.2.3")
+
+
+    implementation("org.springframework.cloud:spring-cloud-starter-config")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 kotlin {
