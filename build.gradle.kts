@@ -128,6 +128,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     // Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus
     implementation("io.micrometer:micrometer-registry-prometheus")
+
+    // Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-webp
+    implementation("com.twelvemonkeys.imageio:imageio-webp:3.13.0")
 }
 
 kotlin {
