@@ -53,6 +53,8 @@ class ImgProxyIntegrationTest : IntegrationTestTemplate() {
                         img.height shouldBe 10
                     }
                 }
+
+
             }
         }
     }
